@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+      - VITE_WS_URL=${VITE_WS_URL}
+    ports:
+      - '5500:80'
+    networks:
+      - app-network
+    depends_on:
+      - back
+
+  back:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    environment:
+      - KEYCLOAK_CERTS=${KEYCLOAK_CERTS}
+    ports:
+      - '3000:3000'
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+

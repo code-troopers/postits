@@ -21,6 +21,7 @@ keycloak.init({ onLoad: 'login-required' }).then((authenticated) => {
 
         (error) => Promise.reject(error),
       );
+
         connectWebSocket();
 
         const app = createApp(App)

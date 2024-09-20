@@ -7,4 +7,5 @@ export interface Message {
   text?: string;
   posX?: number;
   posY?: number;
+  token?: string;
 }

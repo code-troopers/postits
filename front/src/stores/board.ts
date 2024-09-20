@@ -26,11 +26,14 @@ export const useBoardStore = defineStore('board', () => {
         }
         break
       case Actions.DELETE_BOARD:
-        boards.value = boards.value.filter((b) => b.id !== message.id)
+        boards.value = boards.value.filter((b) => b.id !== message.boardId)
         break
       case Actions.NEW_POSTIT:
         board = boards.value.find((b) => b.id === message.boardId)
         if (board) {
+          if (board.postits == null) {
+            board.postits = []
+          }
           board.postits.push({
             id: message.id,
             posX: message.posX,
@@ -125,14 +128,14 @@ export const useBoardStore = defineStore('board', () => {
     }
 
   }
-  function deleteBoard(id: string | undefined) {
-    if (id === undefined) {
+  function deleteBoard(boardId: string | undefined) {
+    if (boardId === undefined) {
       throw new Error('Board ID is required')
     }
     try {
       sendMessage({
         action: Actions.DELETE_BOARD,
-        id: id,
+        boardId: boardId,
       })
     } catch (error) {
       console.error(error)
@@ -178,7 +181,7 @@ export const useBoardStore = defineStore('board', () => {
   }
 
   function getBoards() {
-    axios.get(`${API_URL}/api/boards`).then((response: any) => {
+    return axios.get(`${API_URL}/api/boards`).then((response: any) => {
       boards.value = response.data
     })
   }
@@ -191,9 +194,9 @@ export const useBoardStore = defineStore('board', () => {
     return []
   }
 
-  function initPostits(boardId: string) {
+  async function initPostits(boardId: string) {
     if (boards.value.length === 0) {
-      getBoards()
+      await getBoards()
     }
     const board = boards.value.find((b) => b.id === boardId)
     if (board) {

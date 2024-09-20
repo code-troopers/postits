@@ -38,6 +38,9 @@ export function connectWebSocket(): void {
 }
 
 export function sendMessage(message: Message): void {
+  const token = keycloak.token;
+  message.token = token;
+
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify(message));
   } else {

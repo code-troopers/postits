@@ -206,5 +206,53 @@ export const useBoardStore = defineStore('board', () => {
     }
   }
 
-  return { boards, onMessage, newBoard, renameBoard, deleteBoard, newPostit, updateContent, deletePostit, getPostits, getBoards, initPostits }
+  function addVote(id: string, boardId: string) {
+    try {
+      sendMessage({
+        action: Actions.ADD_VOTE,
+        id: id,
+        boardId: boardId
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function removeVote(id: string, boardId: string) {
+    try {
+      sendMessage({
+        action: Actions.REMOVE_VOTE,
+        id: id,
+        boardId: boardId
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function showPostits(boardId: string, authorId: string) {
+    try {
+      sendMessage({
+        action: Actions.SHOW_POSTITS,
+        boardId: boardId,
+        authorId: authorId
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  function hidePostits(boardId: string, authorId: string) {
+    try {
+      sendMessage({
+        action: Actions.HIDE_POSTITS,
+        boardId: boardId,
+        authorId: authorId
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  return { boards, onMessage, newBoard, renameBoard, deleteBoard, newPostit, updateContent, deletePostit, getPostits, getBoards, initPostits, addVote, removeVote, showPostits, hidePostits }
 })

@@ -1,23 +1,36 @@
 <template>
+  <div>
+  <nav>
+    <ul>
+      <li v-if="!voteModeStatus"><button @click="voteMode">Voter</button></li>
+      <li v-if="voteModeStatus"><button @click="voteMode">Édition</button></li>
+    </ul>
+  </nav>
   <div style="width: 100vw; height: 100vh" @click="createPostit">
     <div v-for="postit in postits" :key="postit.id">
       <div
         @mouseover="hovered = true"
         @mouseleave="hovered = false"
-        @click.stop="mainSelected = false"
+        @click.stop="clickOnPostit(postit.id)"
+         @contextmenu.prevent="rightClickOnPostit(postit.id)"
         :style="{ left: postit.posX + 'px', top: postit.posY + 'px' }"
         class="postit"
       >
         <textarea
           class="full-size"
           v-model="postit.text"
+          :readonly="voteModeStatus"
           @change="updatePostit(postit.id, postit.text)"
         ></textarea>
       <button v-if="hovered" class="hover-button" @click="deletePostit(postit.id)">
         X
       </button>
+      <div class="votes">
+        {{ postit.votes }}
+      </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -34,10 +47,33 @@ const boardId = computed(() => route.params.id as string);
 const postits = computed(() => store.getPostits(boardId.value));
 const mainSelected = ref(true);
 const hovered = ref(false);
+const voteModeStatus = ref(false);
 
 onMounted(() => {
   store.initPostits(boardId.value);
 });
+
+function voteMode() {
+  voteModeStatus.value = !voteModeStatus.value;
+}
+
+function clickOnPostit(id: string | undefined) {
+  if (id === undefined) {
+    return;
+  }
+  mainSelected.value = false
+  if (voteModeStatus.value) {
+    store.addVote(id, boardId.value);
+  }
+}
+function rightClickOnPostit(id: string | undefined) {
+  if (id === undefined) {
+    return;
+  }
+  if (voteModeStatus.value) {
+    store.removeVote(id, boardId.value);
+  }
+}
 
 function createPostit(event: MouseEvent) {
   if (!mainSelected.value) {
@@ -102,5 +138,11 @@ function deletePostit(id: string | undefined) {
 
 .hover-button:hover {
   background-color: #c0392b;
+}
+
+.votes {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
 }
 </style>

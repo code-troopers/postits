@@ -79,7 +79,7 @@ type Message struct {
 	Token    string `json:"token"`
 }
 
-func handleAction(message Message) {
+func handleAction(message *Message) {
 	switch message.Action {
 	case NEW_BOARD:
 		board, err := createBoard(message.Text)
@@ -168,7 +168,7 @@ func WebsocketHandler(c *websocket.Conn, hub *WebSocketHub) {
 
 		log.Printf("Message reçu : %+v", message)
 
-		handleAction(message)
+		handleAction(&message)
 		message.Token = ""
 		msgJSON, err := json.Marshal(message)
 		if err != nil {

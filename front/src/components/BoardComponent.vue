@@ -9,8 +9,8 @@
   <div style="width: 100vw; height: 100vh" @click="createPostit">
     <div v-for="postit in postits" :key="postit.id">
       <div
-        @mouseover="hovered = true"
-        @mouseleave="hovered = false"
+        @mouseover="hovered = postit.id || ''"
+        @mouseleave="hovered = ''"
         @click.stop="clickOnPostit(postit.id)"
          @contextmenu.prevent="rightClickOnPostit(postit.id)"
         :style="{ left: postit.posX + 'px', top: postit.posY + 'px' }"
@@ -22,7 +22,7 @@
           :readonly="voteModeStatus"
           @change="updatePostit(postit.id, postit.text)"
         ></textarea>
-      <button v-if="hovered" class="hover-button" @click="deletePostit(postit.id)">
+      <button v-if="hovered === postit.id" class="hover-button" @click="deletePostit(postit.id)">
         X
       </button>
       <div class="votes">
@@ -46,7 +46,7 @@ const boardId = computed(() => route.params.id as string);
 
 const postits = computed(() => store.getPostits(boardId.value));
 const mainSelected = ref(true);
-const hovered = ref(false);
+const hovered = ref('');
 const voteModeStatus = ref(false);
 
 onMounted(() => {

@@ -19,7 +19,7 @@
         <textarea
           class="full-size"
           v-model="postit.text"
-          :readonly="voteModeStatus"
+          :readonly="voteModeStatus || notMyPostit(postit.author?.id)"
           @change="updatePostit(postit.id, postit.text)"
         ></textarea>
       <button v-if="hovered === postit.id" class="hover-button" @click="deletePostit(postit.id)">
@@ -35,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import keycloak from "@/keycloak";
 import { useBoardStore } from "@/stores/board";
 import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -52,6 +53,13 @@ const voteModeStatus = ref(false);
 onMounted(() => {
   store.initPostits(boardId.value);
 });
+
+function notMyPostit(authorId: string | undefined) {
+  if (authorId === undefined) {
+    return true;
+  }
+  return keycloak.tokenParsed?.sub !== authorId;
+}
 
 function voteMode() {
   voteModeStatus.value = !voteModeStatus.value;

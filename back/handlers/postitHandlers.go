@@ -7,7 +7,7 @@ import (
 	"github.com/gofrs/uuid/v5"
 )
 
-func GetAllPostitsByBoardId(boardID string) ([]database.Postit, error) {
+func GetAllPostitsByBoardId(boardID string, user *database.User) ([]database.Postit, error) {
 	rows, err := database.DB.Query(context.Background(), "SELECT id, board_id, text, pos_x, pos_y, author_id, votes, show FROM postits WHERE board_id = $1", boardID)
 	if err != nil {
 		return nil, err
@@ -20,6 +20,9 @@ func GetAllPostitsByBoardId(boardID string) ([]database.Postit, error) {
 		err := rows.Scan(&postit.ID, &postit.BoardID, &postit.Text, &postit.PosX, &postit.PosY, &postit.Author.ID, &postit.Votes, &postit.Show)
 		if err != nil {
 			return nil, err
+		}
+		if postit.Author.ID != user.ID && postit.Show == false {
+			postit.Text = "**********"
 		}
 		postits = append(postits, postit)
 	}

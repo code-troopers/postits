@@ -32,6 +32,12 @@ func Middleware(pubKey *rsa.PublicKey) fiber.Handler {
 		if err != nil {
 			return c.Status(fiber.StatusUnauthorized).SendString("Token invalide")
 		}
+		user, err := DecodeJWT(token)
+		if err != nil {
+			log.Errorf("Erreur lors du décodage du token : %v", err)
+		}
+		c.Locals("user", user)
+
 		return c.Next()
 	}
 }

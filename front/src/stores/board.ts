@@ -92,15 +92,9 @@ export const useBoardStore = defineStore('board', () => {
         break
 
       case Actions.SHOW_POSTITS:
-        board = boards.value.find((b) => b.id === message.boardId)
-        if (board) {
-          board.postits.forEach((p) => {if (p.author?.id === message.authorId) {p.show = true}})
-        }
-        break
       case Actions.HIDE_POSTITS:
-        board = boards.value.find((b) => b.id === message.boardId)
-        if (board) {
-          board.postits.forEach((p) => {if (p.author?.id === message.authorId) {p.show = false}})
+        if (message.boardId) {
+          initPostits(message.boardId)
         }
         break
 

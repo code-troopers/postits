@@ -4,6 +4,8 @@
     <ul>
       <li v-if="!voteModeStatus"><button @click="voteMode">Voter</button></li>
       <li v-if="voteModeStatus"><button @click="voteMode">Édition</button></li>
+      <li v-if="showMode"><button @click="showHide">Cacher les tickets</button></li>
+      <li v-if="!showMode"><button @click="showHide">Montrer les tickets</button></li>
     </ul>
   </nav>
   <div style="width: 100vw; height: 100vh" @click="createPostit">
@@ -19,6 +21,7 @@
         <textarea
           class="full-size"
           v-model="postit.text"
+          :class="{ 'hidden-font': !notMyPostit(postit.author?.id) && !postit.show }"
           :readonly="voteModeStatus || notMyPostit(postit.author?.id)"
           @change="updatePostit(postit.id, postit.text)"
         ></textarea>
@@ -49,10 +52,24 @@ const postits = computed(() => store.getPostits(boardId.value));
 const mainSelected = ref(true);
 const hovered = ref('');
 const voteModeStatus = ref(false);
+const showMode = ref(false);
 
 onMounted(() => {
   store.initPostits(boardId.value);
+  const p = postits.value.find((postit) => postit.author?.id === keycloak.tokenParsed?.sub)
+  if (p) {
+    showMode.value = p.author?.id === keycloak.tokenParsed?.sub
+  }
 });
+
+function showHide() {
+  if (showMode.value) {
+    store.hidePostits(boardId.value, keycloak.tokenParsed?.sub || '');
+  } else {
+    store.showPostits(boardId.value, keycloak.tokenParsed?.sub || '');
+  }
+  showMode.value = !showMode.value;
+}
 
 function notMyPostit(authorId: string | undefined) {
   if (authorId === undefined) {

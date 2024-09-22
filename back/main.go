@@ -77,7 +77,8 @@ func main() {
 
 	app.Get("/api/boards/:id/postits", func(c *fiber.Ctx) error {
 		boardId := c.Params("id")
-		postits, err := handlers.GetAllPostitsByBoardId(boardId)
+		user := c.Locals("user").(database.User)
+		postits, err := handlers.GetAllPostitsByBoardId(boardId, &user)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).SendString("Erreur lors de la récupération des boards")
 		}

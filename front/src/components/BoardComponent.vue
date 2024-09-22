@@ -150,8 +150,8 @@ const endDrag = () => {
   draggedPostit.value = null;
 };
 
-onMounted(() => {
-  store.initPostits(boardId.value);
+onMounted(async () => {
+  await store.initPostits(boardId.value);
   const p = postits.value.find(
     (postit) => postit.author?.id === keycloak.tokenParsed?.sub
   );

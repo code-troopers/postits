@@ -196,7 +196,7 @@ export const useBoardStore = defineStore('board', () => {
     }
     const board = boards.value.find((b) => b.id === boardId)
     if (board) {
-      axios.get(`${API_URL}/api/boards/${boardId}/postits`).then((response: any) => {
+      await axios.get(`${API_URL}/api/boards/${boardId}/postits`).then((response: any) => {
         board.postits = response.data
       })
     }

@@ -8,7 +8,11 @@ import (
 )
 
 func GetAllPostitsByBoardId(boardID string, user *database.User) ([]database.Postit, error) {
-	rows, err := database.DB.Query(context.Background(), "SELECT id, board_id, text, pos_x, pos_y, author_id, votes, show FROM postits WHERE board_id = $1", boardID)
+	rows, err := database.DB.Query(context.Background(),
+		`SELECT p.id, board_id, text, pos_x, pos_y, author_id, votes, show, u.given_name, u.family_name, u.email, u.picture
+		 FROM postits p
+		 JOIN users u ON p.author_id = u.id
+		 WHERE board_id = $1`, boardID)
 	if err != nil {
 		return nil, err
 	}
@@ -17,7 +21,8 @@ func GetAllPostitsByBoardId(boardID string, user *database.User) ([]database.Pos
 	var postits []database.Postit
 	for rows.Next() {
 		var postit database.Postit
-		err := rows.Scan(&postit.ID, &postit.BoardID, &postit.Text, &postit.PosX, &postit.PosY, &postit.Author.ID, &postit.Votes, &postit.Show)
+		err := rows.Scan(&postit.ID, &postit.BoardID, &postit.Text, &postit.PosX, &postit.PosY, &postit.Author.ID, &postit.Votes, &postit.Show,
+			&postit.Author.GivenName, &postit.Author.FamilyName, &postit.Author.Email, &postit.Author.Picture)
 		if err != nil {
 			return nil, err
 		}

@@ -5,6 +5,7 @@ import { sendMessage } from '../services/websocketService'
 import type { Message } from '@/models/Message'
 import { Actions } from '../Actions'
 import axios from 'axios';
+import type { StickyNote } from '@/models/StickyNote';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -39,7 +40,10 @@ export const useBoardStore = defineStore('board', () => {
             posX: message.posX,
             posY: message.posY,
             show: false,
-            votes: 0
+            votes: 0,
+            author: {
+              id: message.authorId
+            }
           })
         }
         break
@@ -248,14 +252,14 @@ export const useBoardStore = defineStore('board', () => {
     }
   }
 
-  function movePostit(boardId: string, id: string, posX: number, posY: number) {
+  function movePostit(boardId: string, postit: StickyNote) {
     try {
       sendMessage({
         action: Actions.MOVE_POSTIT,
-        boardId: boardId,
-        id: id,
-        posX: posX,
-        posY: posY
+        boardId: postit.board?.id,
+        id: postit.id,
+        posX: postit.posX,
+        posY: postit.posY
       })
     } catch (error) {
       console.error(error)

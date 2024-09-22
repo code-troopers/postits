@@ -8,11 +8,12 @@
       <li v-if="!showMode"><button @click="showHide">Montrer les tickets</button></li>
     </ul>
   </nav>
-  <div style="width: 100vw; height: 100vh" @click="createPostit">
+  <div style="width: 100vw; height: 100vh" @click="createPostit" ref="parentDiv"  @mousemove="onDrag" @mouseup="endDrag">
     <div v-for="postit in postits" :key="postit.id">
       <div
         @mouseover="hovered = postit.id || ''"
         @mouseleave="hovered = ''"
+        @mousedown="startDrag(postit, $event)"
         @click.stop="clickOnPostit(postit.id)"
          @contextmenu.prevent="rightClickOnPostit(postit.id)"
         :style="{ left: postit.posX + 'px', top: postit.posY + 'px' }"
@@ -39,6 +40,7 @@
 
 <script setup lang="ts">
 import keycloak from "@/keycloak";
+import type { StickyNote } from "@/models/StickyNote";
 import { useBoardStore } from "@/stores/board";
 import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -53,6 +55,43 @@ const mainSelected = ref(true);
 const hovered = ref('');
 const voteModeStatus = ref(false);
 const showMode = ref(false);
+
+
+const isDragging = ref(false);
+    const draggedPostit = ref<StickyNote | null>(null); // Index de l'élément actuellement déplacé
+    const parentDiv = ref<HTMLElement | null>(null);
+    const initialMouseX = ref(0);
+    const initialMouseY = ref(0);
+    const initialX = ref(0);
+    const initialY = ref(0);
+
+    const startDrag = (postit: StickyNote, event: MouseEvent) => {
+      console.log(event.clientX, event.clientY)
+      isDragging.value = true;
+      draggedPostit.value = postit;
+      initialMouseX.value = event.clientX;
+      initialMouseY.value = event.clientY;
+      initialX.value = postit.posX || 0;
+      initialY.value = postit.posY || 0;
+    };
+
+    const onDrag = (event: MouseEvent) => {
+      if (isDragging.value && draggedPostit.value !== null) {
+        const dx = event.clientX - initialMouseX.value;
+        const dy = event.clientY - initialMouseY.value;
+
+        draggedPostit.value.posX = initialX.value + dx;
+        draggedPostit.value.posY = initialY.value + dy;
+      }
+    };
+
+    const endDrag = () => {
+      isDragging.value = false;
+      store.movePostit(boardId.value, draggedPostit.value?.id || '', draggedPostit.value?.posX || 0, draggedPostit.value?.posY || 0);
+      draggedPostit.value = null;
+    };
+
+
 
 onMounted(() => {
   store.initPostits(boardId.value);

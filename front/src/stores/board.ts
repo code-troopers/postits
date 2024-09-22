@@ -248,5 +248,21 @@ export const useBoardStore = defineStore('board', () => {
     }
   }
 
-  return { boards, onMessage, newBoard, renameBoard, deleteBoard, newPostit, updateContent, deletePostit, getPostits, getBoards, initPostits, addVote, removeVote, showPostits, hidePostits }
+  function movePostit(boardId: string, id: string, posX: number, posY: number) {
+    try {
+      sendMessage({
+        action: Actions.MOVE_POSTIT,
+        boardId: boardId,
+        id: id,
+        posX: posX,
+        posY: posY
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  return { boards, onMessage, newBoard, renameBoard,
+     deleteBoard, newPostit, updateContent, deletePostit, getPostits, getBoards, initPostits,
+      addVote, removeVote, showPostits, hidePostits, movePostit }
 })

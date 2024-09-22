@@ -55,6 +55,7 @@ const mainSelected = ref(true);
 const hovered = ref('');
 const voteModeStatus = ref(false);
 const showMode = ref(false);
+let throttleTimeout: number | null = null;
 
 
 const isDragging = ref(false);
@@ -82,6 +83,12 @@ const isDragging = ref(false);
 
         draggedPostit.value.posX = initialX.value + dx;
         draggedPostit.value.posY = initialY.value + dy;
+        if (throttleTimeout === null) {
+            store.movePostit(boardId.value, draggedPostit.value?.id || '', draggedPostit.value?.posX || 0, draggedPostit.value?.posY || 0);
+            throttleTimeout = window.setTimeout(() => {
+              throttleTimeout = null;
+            }, 10);
+        }
       }
     };
 

@@ -1,3 +1,4 @@
+import type { User } from "./User";
 
 export interface Message {
   action: string;
@@ -8,4 +9,5 @@ export interface Message {
   posX?: number;
   posY?: number;
   token?: string;
+  author?: User;
 }

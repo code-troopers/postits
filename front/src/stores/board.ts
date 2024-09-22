@@ -41,9 +41,7 @@ export const useBoardStore = defineStore('board', () => {
             posY: message.posY,
             show: false,
             votes: 0,
-            author: {
-              id: message.authorId
-            }
+            author: message.author
           })
         }
         break

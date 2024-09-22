@@ -5,6 +5,7 @@ import (
 	"log"
 	"sync"
 
+	"github.com/code-troopers/postitsonline/database"
 	"github.com/code-troopers/postitsonline/webtoken"
 	"github.com/gofiber/contrib/websocket"
 )
@@ -69,14 +70,15 @@ func (hub *WebSocketHub) Run() {
 }
 
 type Message struct {
-	Action   string `json:"action"`
-	ID       string `json:"id"`
-	BoardId  string `json:"boardId"`
-	AuthorId string `json:"authorId"`
-	Text     string `json:"text"`
-	PosX     int    `json:"posX"`
-	PosY     int    `json:"posY"`
-	Token    string `json:"token"`
+	Action   string        `json:"action"`
+	ID       string        `json:"id"`
+	BoardId  string        `json:"boardId"`
+	AuthorId string        `json:"authorId"`
+	Text     string        `json:"text"`
+	PosX     int           `json:"posX"`
+	PosY     int           `json:"posY"`
+	Token    string        `json:"token"`
+	Author   database.User `json:"author"`
 }
 
 func handleAction(message *Message) {
@@ -105,6 +107,7 @@ func handleAction(message *Message) {
 			return
 		}
 		message.AuthorId = user.ID
+		message.Author = user
 		postit, err := CreatePostit(message.BoardId, message.Text, message.PosX, message.PosY, user.ID)
 		if err != nil {
 			log.Printf("Erreur lors de la création du postit : %v", err)
@@ -118,6 +121,7 @@ func handleAction(message *Message) {
 			log.Printf("Erreur lors du décodage du token : %v", err)
 			return
 		}
+		message.Author = user
 		updatePostitContent(message.ID, message.Text, user.ID)
 
 	case MOVE_POSTIT:

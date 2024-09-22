@@ -84,9 +84,12 @@ const selectedAuthor = ref("");
 
 const authorList = computed(() => {
   const uniqueAuthors: { [id: string]: User } = {};
+  if (!postits.value) {
+    return Object.values([]);
+  }
 
   postits.value.forEach((postit) => {
-    if (postit.author?.id && !uniqueAuthors[postit.author.id]) {
+    if (postit.author?.id && postit.author.givenName && !uniqueAuthors[postit.author.id]) {
       uniqueAuthors[postit.author.id] = postit.author;
     }
   });

@@ -58,10 +58,7 @@ export const useBoardStore = defineStore('board', {
 
       case Actions.MOVE_POSTIT:
         board = this.boards.find((b) => b.id === message.boardId)
-          console.dir(this.boards)
-          console.dir(board)
         if (board) {
-          console.log('ok board')
           const postit = board.postits.find((p) => p.id === message.id)
           if (postit) {
             postit.posX = message.posX

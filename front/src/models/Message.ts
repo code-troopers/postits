@@ -10,4 +10,5 @@ export interface Message {
   posY?: number;
   token?: string;
   author?: User;
+  weight?: number;
 }

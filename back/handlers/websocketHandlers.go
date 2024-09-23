@@ -79,6 +79,7 @@ type Message struct {
 	PosY     int           `json:"posY"`
 	Token    string        `json:"token"`
 	Author   database.User `json:"author"`
+	Weight   int           `json:"weight"`
 }
 
 func handleAction(message *Message) {
@@ -114,6 +115,7 @@ func handleAction(message *Message) {
 			return
 		}
 		message.ID = postit.ID
+		message.Weight = postit.Weight
 
 	case UPDATE_CONTENT:
 		user, err := webtoken.DecodeJWT(message.Token)
@@ -125,7 +127,8 @@ func handleAction(message *Message) {
 		updatePostitContent(message.ID, message.Text, user.ID)
 
 	case MOVE_POSTIT:
-		movePostit(message.ID, message.PosX, message.PosY)
+		w, _ := movePostit(message.ID, message.PosX, message.PosY)
+		message.Weight = w
 
 	case ADD_VOTE:
 		addVote(message.ID)

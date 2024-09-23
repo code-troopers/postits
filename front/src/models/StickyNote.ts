@@ -10,4 +10,5 @@ export class StickyNote {
     posY?: number;
     show: boolean = false;
     votes: number = 0;
+    weight: number = 0;
 }

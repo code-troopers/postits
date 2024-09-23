@@ -19,5 +19,6 @@ CREATE TABLE postits (
     pos_y INT,
     votes INT DEFAULT 0,
     show BOOLEAN DEFAULT TRUE,
-    author_id UUID REFERENCES users(id)
+    author_id UUID REFERENCES users(id),
+    weight INT DEFAULT 0
 );

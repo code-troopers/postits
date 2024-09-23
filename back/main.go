@@ -80,7 +80,7 @@ func main() {
 		user := c.Locals("user").(database.User)
 		postits, err := handlers.GetAllPostitsByBoardId(boardId, &user)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).SendString("Erreur lors de la récupération des boards")
+			return c.Status(fiber.StatusInternalServerError).SendString("Erreur lors de la récupération des postits")
 		}
 
 		if postits == nil {

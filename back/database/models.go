@@ -15,6 +15,7 @@ type Postit struct {
 	Votes   int    `json:"votes"`
 	Show    bool   `json:"show"`
 	Author  User   `json:"author"`
+	Weight  int    `json:"weight"`
 }
 
 type User struct {

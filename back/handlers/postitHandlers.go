@@ -96,7 +96,7 @@ func deletePostit(postitID string) error {
 	return nil
 }
 
-func movePostit(postitID string, posX, posY int) (int, error) {
+func endMovePostit(postitID string, posX, posY int) (int, error) {
 	w := getBiggestWeight(posX, posY, postitID) + 1
 	_, err := database.DB.Exec(context.Background(),
 		"UPDATE postits SET pos_x = $1, pos_y = $2, weight = $3 WHERE id = $4",
@@ -105,6 +105,15 @@ func movePostit(postitID string, posX, posY int) (int, error) {
 		return 0, err
 	}
 	return w, nil
+}
+func movePostit(postitID string, posX, posY int) error {
+	_, err := database.DB.Exec(context.Background(),
+		"UPDATE postits SET pos_x = $1, pos_y = $2 WHERE id = $4",
+		posX, posY, postitID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func addVote(postitId string) error {

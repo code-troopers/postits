@@ -103,7 +103,13 @@ func DecodeJWT(tokenString string) (database.User, error) {
 
 	return database.User{}, fmt.Errorf("token invalide ou signature incorrecte")
 }
+
+var pubKey *rsa.PublicKey
+
 func GetKeycloakPublicKey() (*rsa.PublicKey, error) {
+	if pubKey != nil {
+		return pubKey, nil
+	}
 	keycloakCerts := os.Getenv("KEYCLOAK_CERTS")
 	if keycloakCerts == "" {
 		err := godotenv.Load()
@@ -146,7 +152,7 @@ func GetKeycloakPublicKey() (*rsa.PublicKey, error) {
 	e := big.NewInt(0)
 	e.SetBytes(eBytes)
 
-	pubKey := &rsa.PublicKey{
+	pubKey = &rsa.PublicKey{
 		N: new(big.Int).SetBytes(nBytes),
 		E: int(e.Int64()),
 	}

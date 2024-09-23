@@ -11,17 +11,18 @@ import (
 )
 
 const (
-	NEW_BOARD      string = "NEW_BOARD"      // params name
-	RENAME_BOARD   string = "RENAME_BOARD"   // params id, text
-	DELETE_BOARD   string = "DELETE_BOARD"   // params id
-	NEW_POSTIT     string = "NEW_POSTIT"     // params {}
-	UPDATE_CONTENT string = "UPDATE_CONTENT" // params {id, text}
-	MOVE_POSTIT    string = "MOVE_POSTIT"    // params {id, posX, posY}
-	DELETE_POSTIT  string = "DELETE_POSTIT"  // params id
-	ADD_VOTE       string = "ADD_VOTE"       // params boardId, id
-	REMOVE_VOTE    string = "REMOVE_VOTE"    // params boardId, id
-	SHOW_POSTITS   string = "SHOW_POSTITS"   // params boardId
-	HIDE_POSTITS   string = "HIDE_POSTITS"   // params boardId
+	NEW_BOARD       string = "NEW_BOARD"       // params name
+	RENAME_BOARD    string = "RENAME_BOARD"    // params id, text
+	DELETE_BOARD    string = "DELETE_BOARD"    // params id
+	NEW_POSTIT      string = "NEW_POSTIT"      // params {}
+	UPDATE_CONTENT  string = "UPDATE_CONTENT"  // params {id, text}
+	MOVE_POSTIT     string = "MOVE_POSTIT"     // params {id, posX, posY}
+	END_MOVE_POSTIT string = "END_MOVE_POSTIT" // params {id, posX, posY, moverId}
+	DELETE_POSTIT   string = "DELETE_POSTIT"   // params id
+	ADD_VOTE        string = "ADD_VOTE"        // params boardId, id
+	REMOVE_VOTE     string = "REMOVE_VOTE"     // params boardId, id
+	SHOW_POSTITS    string = "SHOW_POSTITS"    // params boardId
+	HIDE_POSTITS    string = "HIDE_POSTITS"    // params boardId
 )
 
 type WebSocketHub struct {
@@ -80,6 +81,7 @@ type Message struct {
 	Token    string        `json:"token"`
 	Author   database.User `json:"author"`
 	Weight   int           `json:"weight"`
+	MoverId  string        `json:"moverId"`
 }
 
 func handleAction(message *Message) {
@@ -93,13 +95,13 @@ func handleAction(message *Message) {
 		message.ID = board.ID
 
 	case RENAME_BOARD:
-		renameBoard(message.BoardId, message.Text)
+		go renameBoard(message.BoardId, message.Text)
 
 	case DELETE_BOARD:
-		deleteBoard(message.BoardId)
+		go deleteBoard(message.BoardId)
 
 	case DELETE_POSTIT:
-		deletePostit(message.ID)
+		go deletePostit(message.ID)
 
 	case NEW_POSTIT:
 		user, err := webtoken.DecodeJWT(message.Token)
@@ -124,17 +126,26 @@ func handleAction(message *Message) {
 			return
 		}
 		message.Author = user
-		updatePostitContent(message.ID, message.Text, user.ID)
+		go updatePostitContent(message.ID, message.Text, user.ID)
 
 	case MOVE_POSTIT:
-		w, _ := movePostit(message.ID, message.PosX, message.PosY)
+		user, err := webtoken.DecodeJWT(message.Token)
+		if err != nil {
+			log.Printf("Erreur lors du décodage du token : %v", err)
+			return
+		}
+		message.MoverId = user.ID
+
+		go movePostit(message.ID, message.PosX, message.PosY)
+	case END_MOVE_POSTIT:
+		w, _ := endMovePostit(message.ID, message.PosX, message.PosY)
 		message.Weight = w
 
 	case ADD_VOTE:
-		addVote(message.ID)
+		go addVote(message.ID)
 
 	case REMOVE_VOTE:
-		removeVote(message.ID)
+		go removeVote(message.ID)
 
 	case SHOW_POSTITS:
 		user, err := webtoken.DecodeJWT(message.Token)
@@ -143,7 +154,7 @@ func handleAction(message *Message) {
 			return
 		}
 		message.AuthorId = user.ID
-		showPostits(message.BoardId, user.ID, true)
+		go showPostits(message.BoardId, user.ID, true)
 
 	case HIDE_POSTITS:
 		user, err := webtoken.DecodeJWT(message.Token)
@@ -152,7 +163,7 @@ func handleAction(message *Message) {
 			return
 		}
 		message.AuthorId = user.ID
-		showPostits(message.BoardId, user.ID, false)
+		go showPostits(message.BoardId, user.ID, false)
 	}
 }
 

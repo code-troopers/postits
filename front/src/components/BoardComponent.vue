@@ -24,7 +24,7 @@
           @contextmenu.prevent="rightClickOnPostit(postit.id)"
           :style="{ left: postit.posX + 'px', top: postit.posY + 'px' }"
           class="postit"
-          :class="{ highlight: selectedAuthor === postit.author?.id }"
+          :class="{ highlight: selectedAuthor === postit.author?.id, highZIndex: draggedPostit?.id === postit.id }"
         >
           <textarea
             class="full-size"
@@ -133,7 +133,7 @@ const onDrag = (event: MouseEvent) => {
       store.movePostit(boardId.value, draggedPostit.value);
       throttleTimeout = window.setTimeout(() => {
         throttleTimeout = null;
-      }, 10);
+      }, 15);
     }
   }
 };
@@ -145,9 +145,11 @@ const endDrag = () => {
     (draggedPostit.value.posX !== initialX.value ||
       draggedPostit.value.posY !== initialY.value)
   ) {
-    store.movePostit(boardId.value, draggedPostit.value);
+    store.endMovePostit(boardId.value, draggedPostit.value);
   }
-  draggedPostit.value = null;
+  window.setTimeout(() => {
+    draggedPostit.value = null;
+  }, 50);
 };
 
 onMounted(async () => {
@@ -281,5 +283,9 @@ function deletePostit(id: string | undefined) {
   position: absolute;
   top: 5px;
   right: 5px;
+}
+
+.highZIndex {
+  z-index: 100;
 }
 </style>

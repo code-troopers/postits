@@ -11,4 +11,5 @@ export interface Message {
   token?: string;
   author?: User;
   weight?: number;
+  moverId?: string;
 }

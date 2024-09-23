@@ -7,6 +7,7 @@ export enum Actions {
     NEW_POSTIT = 'NEW_POSTIT', // params {}
     UPDATE_CONTENT = 'UPDATE_CONTENT', // params {boardId, id, text}
     MOVE_POSTIT = 'MOVE_POSTIT', // params {boardId,id, from, to}
+    END_MOVE_POSTIT = 'END_MOVE_POSTIT', // params {boardId,id, from, to}
     DELETE_POSTIT = 'DELETE_POSTIT', // params boardId, id
     ADD_VOTE = 'ADD_VOTE', // params bardId, id
     REMOVE_VOTE = 'REMOVE_VOTE', // params boardId, id

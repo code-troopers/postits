@@ -13,12 +13,15 @@
       ref="parentDiv"
       @mousemove="onDrag"
       @mouseup="endDrag"
+      @touchmove="onDrag"
+      @touchend="endDrag"
     >
       <div v-for="postit in postits" :key="postit.id">
         <div
           @mouseover="hovered = postit.id || ''"
           @mouseleave="hovered = ''"
           @mousedown="startDrag(postit, $event)"
+          @touchstart="startDrag(postit, $event)"
           @click.stop="clickOnPostit(postit.id)"
           @contextmenu.prevent="rightClickOnPostit(postit.id)"
           :style="{ left: postit.posX + 'px', top: postit.posY + 'px' }"
@@ -111,19 +114,31 @@ const initialMouseY = ref(0);
 const initialX = ref(0);
 const initialY = ref(0);
 
-const startDrag = (postit: StickyNote, event: MouseEvent) => {
+const startDrag = (postit: StickyNote, event: MouseEvent|TouchEvent) => {
   isDragging.value = true;
   draggedPostit.value = postit;
-  initialMouseX.value = event.clientX;
-  initialMouseY.value = event.clientY;
+  if (event instanceof MouseEvent) {
+    initialMouseX.value = event.clientX;
+    initialMouseY.value = event.clientY;
+  } else {
+    initialMouseX.value = event.touches[0].clientX;
+    initialMouseY.value = event.touches[0].clientY;
+  }
   initialX.value = postit.posX || 0;
   initialY.value = postit.posY || 0;
 };
 
-const onDrag = (event: MouseEvent) => {
+const onDrag = (event: MouseEvent|TouchEvent) => {
   if (isDragging.value && draggedPostit.value !== null) {
-    const dx = event.clientX - initialMouseX.value;
-    const dy = event.clientY - initialMouseY.value;
+    let dx, dy;
+    if (event instanceof MouseEvent) {
+      dx = event.clientX - initialMouseX.value;
+      dy = event.clientY - initialMouseY.value;
+    } else {
+      event.preventDefault();
+      dx = event.touches[0].clientX - initialMouseX.value;
+      dy = event.touches[0].clientY - initialMouseY.value;
+    }
 
     draggedPostit.value.posX = initialX.value + dx;
     draggedPostit.value.posY = initialY.value + dy;

@@ -48,7 +48,7 @@ export const useBoardStore = defineStore('board', {
           }
           break
         case Actions.UPDATE_CONTENT:
-          if (message.authorId === keycloak.tokenParsed?.sub) {
+          if (message.author?.id === keycloak.tokenParsed?.sub) {
             return
           }
           board = this.boards.find((b) => b.id === message.boardId)

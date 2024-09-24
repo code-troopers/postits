@@ -7,3 +7,8 @@ import BoardComponent from '../components/BoardComponent.vue';
     <BoardComponent />
   </main>
 </template>
+
+<style scoped>
+main {
+  width: fit-content;
+}</style>

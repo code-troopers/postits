@@ -58,7 +58,12 @@
   font-weight: normal;
 }
 
+#app {
+  width: fit-content;
+}
+
 body {
+  width: 100%;
   min-height: 100vh;
   color: var(--color-text);
   background: var(--color-background);

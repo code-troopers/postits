@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <nav>
+    <nav class="tool-buttons">
       <ul>
         <li v-if="!voteModeStatus"><button @click="voteMode">Voter</button></li>
         <li v-if="voteModeStatus"><button @click="voteMode">Édition</button></li>
@@ -9,7 +8,7 @@
       </ul>
     </nav>
     <div
-      style="width: 100vw; height: 100vh"
+      class="postits-container"
       @click="createPostit"
       ref="parentDiv"
       @mousemove="onDrag"
@@ -58,7 +57,6 @@
         </li>
       </ul>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -280,12 +278,129 @@ function deletePostit(id: string | undefined) {
 }
 
 .author-list {
-  position: absolute;
+  position: fixed;
   top: 5px;
   right: 5px;
+  max-width: 400px;
+  margin: 20px auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  overflow: hidden;
+}
+
+.author-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.author-list li {
+  margin: 5px 0;
+}
+
+.author-list button {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.author-list button:hover {
+  background-color: #f0f0f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.author-list button:focus {
+  outline: none;
+}
+
+.author-list button.highlight {
+  background-color: #007BFF;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  border-color: #007BFF;
+}
+
+.author-list button.highlight:hover {
+  background-color: #0056b3;
 }
 
 .highZIndex {
   z-index: 100;
 }
+
+.postits-container {
+  width: 2048px;
+  height: 2048px;
+  background-color: var(--color-background-soft);
+}
+
+/* Conteneur principal de la barre de navigation */
+.tool-buttons {
+  display: flex;
+  justify-content: flex-start; /* Aligne les boutons à gauche */
+  background-color: #ffffff;
+  padding: 8px 12px;
+  border-bottom: 2px solid #ddd;
+}
+
+/* Liste de la barre de navigation */
+.tool-buttons ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 8px; /* Espace entre les boutons */
+  align-items: center;
+}
+
+/* Élément de la liste */
+.tool-buttons li {
+  margin: 0;
+}
+
+/* Boutons de la barre de navigation */
+.tool-buttons button {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Ajout d'icônes aux boutons */
+.tool-buttons button::before {
+  margin-right: 6px;
+}
+
+/* Effet au survol des boutons */
+.tool-buttons button:hover {
+  background-color: #e0e0e0;
+  border-color: #bbb;
+}
+
+/* Boutons en focus */
+.tool-buttons button:focus {
+  outline: none;
+  border-color: #007BFF;
+}
+
+/* Bouton actif pour plus de rétroaction */
+.tool-buttons button:active {
+  background-color: #d1d1d1;
+}
+
 </style>

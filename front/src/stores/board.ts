@@ -48,6 +48,9 @@ export const useBoardStore = defineStore('board', {
           }
           break
         case Actions.UPDATE_CONTENT:
+          if (message.authorId === keycloak.tokenParsed?.sub) {
+            return
+          }
           board = this.boards.find((b) => b.id === message.boardId)
           if (board) {
             const postit = board.postits.find((p) => p.id === message.id)
@@ -155,25 +158,27 @@ export const useBoardStore = defineStore('board', {
         console.error(error)
       }
     },
-    newPostit(boardId: string, x: number, y: number) {
+    newPostit(boardId: string, x: number, y: number, show: boolean) {
       try {
         sendMessage({
           action: Actions.NEW_POSTIT,
           boardId: boardId,
           posX: x,
           posY: y,
+          show: show
         })
       } catch (error) {
         console.error(error)
       }
     },
-    updateContent(boardId: string, id: string, text: string) {
+    updateContent(boardId: string, id: string, text: string, show: boolean) {
       try {
         sendMessage({
           action: Actions.UPDATE_CONTENT,
           boardId: boardId,
           id: id,
-          text: text
+          text: text,
+          show: show
         })
       } catch (error) {
         console.error(error)

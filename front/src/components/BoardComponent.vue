@@ -202,7 +202,7 @@ function createPostit(event: MouseEvent) {
   if (!mainSelected.value) {
     mainSelected.value = true;
   } else {
-    store.newPostit(boardId.value, event.clientX, event.clientY);
+    store.newPostit(boardId.value, event.clientX, event.clientY, showMode.value);
   }
 }
 
@@ -210,7 +210,7 @@ function updatePostit(id: string | undefined, text: string | undefined) {
   if (id === undefined || text === undefined) {
     return;
   }
-  store.updateContent(boardId.value, id, text);
+  store.updateContent(boardId.value, id, text, showMode.value);
 }
 
 function deletePostit(id: string | undefined) {

@@ -58,7 +58,7 @@ func getBiggestWeight(posX int, posY int, postitID string) int {
 	return weight
 }
 
-func CreatePostit(boardID, text string, posX, posY int, authorID string) (*database.Postit, error) {
+func CreatePostit(boardID, text string, posX, posY int, authorID string, show bool) (*database.Postit, error) {
 	u2, err := uuid.NewV4()
 	if err != nil {
 		return nil, err
@@ -68,12 +68,12 @@ func CreatePostit(boardID, text string, posX, posY int, authorID string) (*datab
 	w := getBiggestWeight(posX, posY, "") + 1
 
 	_, err = database.DB.Exec(context.Background(),
-		"INSERT INTO postits (id, board_id, text, pos_x, pos_y, author_id, weight) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-		postitID, boardID, text, posX, posY, authorID, w)
+		"INSERT INTO postits (id, board_id, text, pos_x, pos_y, author_id, weight, show) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+		postitID, boardID, text, posX, posY, authorID, w, show)
 	if err != nil {
 		return nil, err
 	}
-	return &database.Postit{ID: postitID, BoardID: boardID, Text: text, PosX: posX, PosY: posY, Author: database.User{ID: authorID}, Weight: w}, nil
+	return &database.Postit{ID: postitID, BoardID: boardID, Text: text, PosX: posX, PosY: posY, Author: database.User{ID: authorID}, Weight: w, Show: show}, nil
 }
 
 func updatePostitContent(postitID, text, userId string) error {

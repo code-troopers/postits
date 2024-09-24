@@ -82,6 +82,7 @@ type Message struct {
 	Author   database.User `json:"author"`
 	Weight   int           `json:"weight"`
 	MoverId  string        `json:"moverId"`
+	Show     bool          `json:"show"`
 }
 
 func handleAction(message *Message) {
@@ -111,7 +112,7 @@ func handleAction(message *Message) {
 		}
 		message.AuthorId = user.ID
 		message.Author = user
-		postit, err := CreatePostit(message.BoardId, message.Text, message.PosX, message.PosY, user.ID)
+		postit, err := CreatePostit(message.BoardId, message.Text, message.PosX, message.PosY, user.ID, message.Show)
 		if err != nil {
 			log.Printf("Erreur lors de la création du postit : %v", err)
 			return
@@ -126,7 +127,10 @@ func handleAction(message *Message) {
 			return
 		}
 		message.Author = user
-		go updatePostitContent(message.ID, message.Text, user.ID)
+		updatePostitContent(message.ID, message.Text, user.ID)
+		if !message.Show {
+			message.Text = "**********"
+		}
 
 	case MOVE_POSTIT:
 		user, err := webtoken.DecodeJWT(message.Token)

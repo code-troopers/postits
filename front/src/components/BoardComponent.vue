@@ -156,7 +156,7 @@ onMounted(async () => {
     (postit) => postit.author?.id === keycloak.tokenParsed?.sub
   );
   if (p) {
-    showMode.value = p.author?.id === keycloak.tokenParsed?.sub;
+    showMode.value = p.show;
   }
 });
 

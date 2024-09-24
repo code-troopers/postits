@@ -42,6 +42,6 @@ export function sendMessage(message: Message): void {
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify(message));
   } else {
-    throw new Error('WebSocket is not connected');
+    connectWebSocket();
   }
 }

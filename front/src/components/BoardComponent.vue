@@ -16,6 +16,10 @@
       @touchmove="onDrag"
       @touchend="endDrag"
     >
+      <div class="keep"></div>
+      <div class="start"></div>
+      <div class="stop"></div>
+      <div class="thanks"></div>
       <div v-for="postit in postits" :key="postit.id">
         <div
           @mouseover="hovered = postit.id || ''"
@@ -416,6 +420,46 @@ function deletePostit(id: string | undefined) {
 /* Bouton actif pour plus de rétroaction */
 .tool-buttons button:active {
   background-color: #d1d1d1;
+}
+
+.keep {
+  background-color:rgba(209, 213, 233, 0.99);
+  width: 600px;
+  height: 600px;
+  position: absolute;
+  top: 200px;
+  left: 100px;
+  border: 0.5px solid black;
+}
+
+.start {
+  background-color:rgba(217, 240, 211, 0.99);
+  width: 600px;
+  height: 600px;
+  position: absolute;
+  top: 200px;
+  left: 720px;
+  border: 0.5px solid black;
+}
+
+.stop {
+  background-color:rgba(255, 208, 208, 0.99);
+  width: 600px;
+  height: 600px;
+  position: absolute;
+  top: 820px;
+  left: 100px;
+  border: 0.5px solid black;
+}
+
+.thanks {
+  background-color:rgba(245, 244, 181, 0.959);
+  width: 600px;
+  height: 600px;
+  position: absolute;
+  top: 820px;
+  left: 720px;
+  border: 0.5px solid black;
 }
 
 </style>

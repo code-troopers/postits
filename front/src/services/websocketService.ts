@@ -24,7 +24,6 @@ export function connectWebSocket(): void {
     const store = useBoardStore();
     const message: Message = JSON.parse(event.data);
     store.onMessage(message);
-    console.log('Message received:', message);
   };
 
   ws.onerror = (error: Event) => {

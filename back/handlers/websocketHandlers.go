@@ -154,7 +154,7 @@ func handleAction(message *Message) {
 			return
 		}
 		message.AuthorId = user.ID
-		go showPostits(message.BoardId, user.ID, true)
+		showPostits(message.BoardId, user.ID, true)
 
 	case HIDE_POSTITS:
 		user, err := webtoken.DecodeJWT(message.Token)
@@ -163,7 +163,7 @@ func handleAction(message *Message) {
 			return
 		}
 		message.AuthorId = user.ID
-		go showPostits(message.BoardId, user.ID, false)
+		showPostits(message.BoardId, user.ID, false)
 	}
 }
 

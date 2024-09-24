@@ -22,7 +22,7 @@ export const useBoardStore = defineStore('board', {
           this.boards.push(board)
           break
         case Actions.RENAME_BOARD:
-          board = this.boards.find((b) => b.id === message.id)
+          board = this.boards.find((b) => b.id === message.boardId)
           if (board) {
             board.name = message.text
           }

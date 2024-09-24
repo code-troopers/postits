@@ -13,7 +13,6 @@ export function connectWebSocket(): void {
     return;
   }
 
-  // Inclure le token dans la chaîne de requête
   const wsUrl = `${WS_URL}/ws?token=${encodeURIComponent(token)}`;
   ws = new WebSocket(wsUrl);
 

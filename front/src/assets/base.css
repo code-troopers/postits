@@ -60,6 +60,7 @@
 
 #app {
   width: fit-content;
+  min-width: 100%;
 }
 
 body {
